@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+<body>
+
+<header>
+
+<h1>🛒 My Shopping Website</h1>
+
+<nav>
+<a href="/">Home</a>
+<a href="/products">Products</a>
+<a href="/cart">Cart</a>
+<a href="/login">Login</a>
+</nav>
+
+</header>
+
+<h2 class="title">Our Products</h2>
+
+<div class="products">
+
+<div class="card">
+<img src="https://picsum.photos/200?random=1">
+<h3>Laptop</h3>
+<p>₹55,000</p>
+<button>Add To Cart</button>
+</div>
+
+<div class="card">
+<img src="https://picsum.photos/200?random=2">
+<h3>Mobile</h3>
+<p>₹22,000</p>
+<button>Add To Cart</button>
+</div>
+
+<div class="card">
+<img src="https://picsum.photos/200?random=3">
+<h3>Headphones</h3>
+<p>₹2,500</p>
+<button onclick="addToCart('Laptop', 55000)">Add To Cart</button>
+</div>
+
+<div class="card">
+<img src="https://picsum.photos/200?random=4">
+<h3>Watch</h3>
+<p>₹3,999</p>
+<button onclick="addToCart('Mobile', 22000)">Add To Cart</button>
+<button onclick="addToCart('Headphones', 2500)">Add To Cart</button>
+<button onclick="addToCart('Watch', 3999)">Add To Cart</button>
+</div>
+
+</div>
+
+</body>
+</html>

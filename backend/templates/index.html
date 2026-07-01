@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Shopping Website</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<header>
+
+<h1>🛒 My Shopping Website</h1>
+
+<nav>
+
+    <a href="/">Home</a>
+    <a href="/products">Products</a>
+    <a href="/cart">Cart</a>
+
+    {% if user %}
+        <a href="/logout">Logout</a>
+    {% else %}
+        <a href="/login">Login</a>
+        <a href="/signup">Signup</a>
+    {% endif %}
+
+</nav>
+</header>
+
+<section>
+
+<h2>Welcome to Our Store</h2>
+
+<p>Best Deals Every Day</p>
+
+<button>Shop Now</button>
+
+</section>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+</html>
