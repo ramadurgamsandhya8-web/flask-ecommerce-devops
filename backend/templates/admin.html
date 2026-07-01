@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<header>
+    <h1>Admin Dashboard</h1>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/products">Products</a>
+        <a href="/admin">Admin</a>
+        <a href="/add-product">Add Product</a>
+    </nav>
+</header>
+
+<h2 class="title">Users</h2>
+
+{% for user in users %}
+<div class="card">
+    <h3>{{ user[1] }}</h3>
+    <p>{{ user[2] }}</p>
+</div>
+{% endfor %}
+
+<h2 class="title">Orders</h2>
+
+<div class="cart-container">
+{% for order in orders %}
+    <div class="card">
+        <h3>{{ order[2] }}</h3>
+        <p>User: {{ order[1] }}</p>
+        <p>Quantity: {{ order[3] }}</p>
+        <p>Price: ₹{{ order[4] }}</p>
+        <p>Total: ₹{{ order[5] }}</p>
+        <p>Customer: {{ order[6] }}</p>
+        <p>Phone: {{ order[7] }}</p>
+        <p>Address: {{ order[8] }}, {{ order[9] }} - {{ order[10] }}</p>
+    </div>
+{% endfor %}
+</div>
+</body>
+</html>

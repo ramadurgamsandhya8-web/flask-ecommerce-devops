@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Cart</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
@@ -15,17 +14,66 @@
         <a href="/">Home</a>
         <a href="/products">Products</a>
         <a href="/cart">Cart</a>
-        <a href="/login">Login</a>
+
+        {% if user %}
+            <a href="/logout">Logout</a>
+        {% else %}
+            <a href="/login">Login</a>
+            <a href="/signup">Signup</a>
+        {% endif %}
     </nav>
 </header>
 
 <h2 class="title">My Shopping Cart</h2>
 
-<div id="cart-items"></div>
+<div style="text-align:center; margin:20px;">
+    <a href="/clear-cart">
+        <button class="clear-btn">Clear Cart</button>
+    </a>
+</div>
 
-<h2 id="total"></h2>
+{% if cart_items %}
 
-<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+<div class="cart-container">
+    {% for item in cart_items %}
+        <div class="card">
+            <h3>{{ item.name }}</h3>
+
+            <p>Price: ₹{{ item.price }}</p>
+
+            <div class="quantity-controls">
+                <a href="/decrease/{{ item.name }}">
+                    <button class="qty-btn">-</button>
+                </a>
+
+                <span class="qty">{{ item.get("quantity", 1) }}</span>
+
+                <a href="/increase/{{ item.name }}">
+                    <button class="qty-btn">+</button>
+                </a>
+            </div>
+
+            <p>Total: ₹{{ item.price * item.get("quantity", 1) }}</p>
+
+            <a href="/remove-item/{{ item.name }}">
+                <button class="remove-btn">Remove</button>
+            </a>
+        </div>
+    {% endfor %}
+</div>
+
+<h2 class="total">Grand Total: ₹{{ total }}</h2><div style="text-align:center; margin:20px;">
+    <a href="/checkout">
+        <button class="checkout-btn">Checkout</button>
+    </a>
+</div>
+
+
+{% else %}
+
+<p style="text-align:center;">No items in cart</p>
+
+{% endif %}
 
 </body>
 </html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<header>
+    <h1>🛒 My Shopping Website</h1>
+
+    <nav>
+        <a href="/">Home</a>
+        <a href="/products">Products</a>
+        <a href="/cart">Cart</a>
+    </nav>
+</header>
+
+<h2 class="title">Checkout</h2>
+
+<form action="/place-order" method="POST" class="checkout-form">
+
+    <input type="text" name="name" placeholder="Full Name" required>
+
+    <input type="text" name="phone" placeholder="Mobile Number" required>
+
+    <textarea name="address" placeholder="Address" required></textarea>
+
+    <input type="text" name="city" placeholder="City" required>
+
+    <input type="text" name="pincode" placeholder="Pincode" required>
+
+    <button type="submit">Place Order</button>
+
+</form>
+
+</body>
+</html>

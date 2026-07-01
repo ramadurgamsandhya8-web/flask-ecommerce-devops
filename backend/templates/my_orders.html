@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Orders</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<header>
+    <h1>🛒 My Shopping Website</h1>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/products">Products</a>
+        <a href="/cart">Cart</a>
+        <a href="/my-orders">My Orders</a>
+        <a href="/logout">Logout</a>
+    </nav>
+</header>
+
+<h2 class="title">My Orders</h2>
+
+{% if orders %}
+    <div class="cart-container">
+        {% for order in orders %}
+            <div class="card">
+                <h3>{{ order[0] }}</h3>
+                <p>Quantity: {{ order[1] }}</p>
+                <p>Price: ₹{{ order[2] }}</p>
+                <p>Total: ₹{{ order[3] }}</p>
+                <p>Name: {{ order[4] }}</p>
+                <p>Phone: {{ order[5] }}</p>
+                <p>Address: {{ order[6] }}, {{ order[7] }} - {{ order[8] }}</p>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p style="text-align:center;">No orders found</p>
+{% endif %}
+
+</body>
+</html>
