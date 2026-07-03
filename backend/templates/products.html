@@ -29,6 +29,47 @@
 
 <h2 class="title">Our Products</h2>
 
+<div class="search-container">
+    <form action="/products" method="GET">
+        <input
+            type="text"
+            name="search"
+            placeholder="Search products..."
+            value="{{ request.args.get('search','') }}"
+        >
+        <button type="submit">Search</button>
+    </form>
+</div>
+    <div class="filter-container">
+    <a href="/products">All</a>
+    <a href="/products?category=Electronics">Electronics</a>
+    <a href="/products?category=Telecommunications">Telecommunications</a>
+    <a href="/products?category=Audio Accessories">Audio Accessories</a>
+    <a href="/products?category=Fashion">Fashion</a>
+</div>
+<div class="sort-container">
+
+    <form action="/products" method="GET">
+
+        <select name="sort">
+
+            <option value="">Sort By Price</option>
+
+            <option value="low">Price: Low to High</option>
+
+            <option value="high">Price: High to Low</option>
+
+        </select>
+
+        <button type="submit">Apply</button>
+
+    </form>
+
+</div>
+
+
+
+
 <div class="products">
 
     {% for product in products %}
@@ -41,13 +82,18 @@
 
             <p>{{ product[4] }}</p>
 
+            <a href="/product/{{ product[0] }}">
+            <button type="button">View Details</button>
+        </a>
+
             <a href="/add-to-cart/{{ product[1] }}/{{ product[2] }}">
-                <button type="button">Add To Cart</button>
-            </a>
+            <button type="button">Add To Cart</button>
+        </a>
         </div>
     {% endfor %}
 
 </div>
+
 
 </body>
 </html>

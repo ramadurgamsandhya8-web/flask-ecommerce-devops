@@ -5,6 +5,8 @@ app = Flask(__name__)
 app.secret_key = "mysecretkey"
 
 
+
+
 def create_table():
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
@@ -15,6 +17,16 @@ def create_table():
             name TEXT NOT NULL,
             email TEXT NOT NULL UNIQUE,
             password TEXT NOT NULL
+        )
+    """)
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS products (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            price INTEGER NOT NULL,
+            image TEXT,
+            category TEXT
         )
     """)
 
@@ -34,16 +46,6 @@ def create_table():
         )
     """)
 
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS products (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            price INTEGER NOT NULL,
-            image TEXT,
-            category TEXT
-        )
-    """)
-
     conn.commit()
     conn.close()
 
@@ -58,22 +60,69 @@ def home():
 
 @app.route("/products")
 def products():
+    search = request.args.get("search")
+    category = request.args.get("category")
+    sort = request.args.get("sort")
+
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
 
-    cursor.execute("SELECT * FROM products")
+    if search:
+        cursor.execute(
+            "SELECT * FROM products WHERE name LIKE ?",
+            ("%" + search + "%",)
+        )
+
+    elif category:
+        cursor.execute(
+            "SELECT * FROM products WHERE category=?",
+            (category,)
+        )
+
+    else:
+
+        if sort == "low":
+            cursor.execute("SELECT * FROM products ORDER BY price ASC")
+
+        elif sort == "high":
+            cursor.execute("SELECT * FROM products ORDER BY price DESC")
+
+        else:
+            cursor.execute("SELECT * FROM products")
+
     products = cursor.fetchall()
+    conn.close()
+
+    return render_template(
+        "products.html",
+        products=products,
+        user=session.get("user"))
+
+@app.route("/product/<int:id>")
+def product_details(id):
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM products WHERE id=?", (id,))
+    product = cursor.fetchone()
 
     conn.close()
 
-    return render_template("products.html", products=products, user=session.get("user"))
+    return render_template("product_details.html", product=product, user=session.get("user"))
+    
 
 
 @app.route("/cart")
 def cart():
     cart_items = session.get("cart", [])
     total = sum(item["price"] * item.get("quantity", 1) for item in cart_items)
-    return render_template("cart.html", cart_items=cart_items, total=total, user=session.get("user"))
+
+    return render_template(
+        "cart.html",
+        cart_items=cart_items,
+        total=total,
+        user=session.get("user")
+    )
 
 
 @app.route("/add-to-cart/<name>/<int:price>")
@@ -94,12 +143,6 @@ def add_to_cart(name, price):
 
     session["cart"] = cart
     return redirect("/cart")
-
-
-@app.route("/clear-cart")
-def clear_cart():
-    session.pop("cart", None)
-    return redirect("/products")
 
 
 @app.route("/remove-item/<name>")
@@ -134,6 +177,12 @@ def decrease(name):
 
     session["cart"] = cart
     return redirect("/cart")
+
+
+@app.route("/clear-cart")
+def clear_cart():
+    session.pop("cart", None)
+    return redirect("/products")
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -260,12 +309,17 @@ def admin_dashboard():
     cursor.execute("SELECT id, name, email FROM users")
     users = cursor.fetchall()
 
-    cursor.execute("SELECT id, user, product, quantity, price, total, name, phone, address, city, pincode FROM orders")
+    cursor.execute(
+        "SELECT id, user, product, quantity, price, total, name, phone, address, city, pincode FROM orders"
+    )
     orders = cursor.fetchall()
+
+    cursor.execute("SELECT * FROM products")
+    products = cursor.fetchall()
 
     conn.close()
 
-    return render_template("admin.html", users=users, orders=orders)
+    return render_template("admin.html", users=users, orders=orders, products=products)
 
 
 @app.route("/add-product", methods=["GET", "POST"])
@@ -292,6 +346,19 @@ def add_product():
     return render_template("add_product.html", user=session.get("user"))
 
 
+@app.route("/delete-product/<int:id>")
+def delete_product(id):
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+
+    cursor.execute("DELETE FROM products WHERE id=?", (id,))
+
+    conn.commit()
+    conn.close()
+
+    return redirect("/admin")
+
+
 @app.route("/insert-products")
 def insert_products():
     conn = sqlite3.connect("database.db")
@@ -301,7 +368,7 @@ def insert_products():
         ("Laptop", 55000, "https://picsum.photos/200?random=1", "Electronics"),
         ("Mobile", 22000, "https://picsum.photos/200?random=2", "Electronics"),
         ("Headphones", 2500, "https://picsum.photos/200?random=3", "Accessories"),
-        ("Watch", 3999, "https://picsum.photos/200?random=4", "Accessories")
+        ("Watch", 3999, "https://picsum.photos/200?random=4", "Fashion")
     ]
 
     for product in sample_products:
@@ -316,6 +383,19 @@ def insert_products():
     return "Products Inserted Successfully"
 
 
+@app.route("/clear-products")
+def clear_products():
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+
+    cursor.execute("DELETE FROM products")
+
+    conn.commit()
+    conn.close()
+
+    return "Products Deleted"
+
+
 @app.route("/check-orders")
 def check_orders():
     conn = sqlite3.connect("database.db")
@@ -327,19 +407,6 @@ def check_orders():
     conn.close()
 
     return str(orders)
-
-@app.route("/clear-products")
-def clear_products():
-
-    conn = sqlite3.connect("database.db")
-    cursor = conn.cursor()
-
-    cursor.execute("DELETE FROM products")
-
-    conn.commit()
-    conn.close()
-
-    return "Products Deleted"
 
 
 @app.route("/logout")
